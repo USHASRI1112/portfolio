@@ -34,12 +34,15 @@ const Contact = () => {
     setIsLoading(true);
 
     try {
-      await emailjs.send(import.meta.env.VITE_EMAILJS_SERVICE_ID, import.meta.env.VITE_EMAILJS_TEMPLATE_ID, {
-        to_email: "ushasrigudikandula456@gmail.com",
-        from_name: formData.name,
-        from_email: formData.email,
-        message: formData.message,
-        reply_to: formData.email,
+      await fetch("/.netlify/functions/sendMail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "ushasrigudikandula456@gmail.com",
+          subject: "New message from Portfolio Contact Form",
+          message: `Name: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`,
+          from_name: formData.name,
+        }),
       });
 
       toast({
@@ -66,7 +69,8 @@ const Contact = () => {
           Get in Touch
         </h1>
         <p className="animate-fade-in-delay-1 mt-4 max-w-xl text-muted-foreground">
-          I'm always open to discussing new opportunities and interesting projects.
+          I'm always open to discussing new opportunities and interesting
+          projects.
         </p>
 
         <div className="mt-12 grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-2">
@@ -81,7 +85,11 @@ const Contact = () => {
                   key={link.id}
                   href={link.href}
                   target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    link.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
                   className="group flex items-center gap-4 rounded-xl border border-border bg-card p-3 transition-all duration-300 hover:border-portfolio-accent/50 hover:shadow-md"
                   style={{ animationDelay: `${(index + 1) * 0.1}s` }}
                 >
@@ -89,8 +97,12 @@ const Contact = () => {
                     {iconMap[link.iconName]}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{link.label}</p>
-                    <p className="truncate text-sm text-muted-foreground">{link.value}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {link.label}
+                    </p>
+                    <p className="truncate text-sm text-muted-foreground">
+                      {link.value}
+                    </p>
                   </div>
                   <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:opacity-100" />
                 </a>
@@ -112,7 +124,9 @@ const Contact = () => {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                     placeholder="Your name"
                     className="h-11"
@@ -126,7 +140,9 @@ const Contact = () => {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                     placeholder="your@email.com"
                     className="h-11"
@@ -140,14 +156,20 @@ const Contact = () => {
                 <Textarea
                   id="message"
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
                   required
                   placeholder="Your message..."
                   rows={4}
                   className="resize-none sm:rows-6 md:rows-8"
                 />
               </div>
-              <Button type="submit" disabled={isLoading} className="w-full h-11">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11"
+              >
                 {isLoading ? (
                   <>
                     <Loader className="mr-2 h-4 w-4 animate-spin" />
